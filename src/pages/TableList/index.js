@@ -1,73 +1,87 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BaseTable, useTablePipeline, features, fusion, isLoading } from 'ali-react-table';
+import React, { useState, useEffect } from 'react';
+import { BaseTable, useTablePipeline, features } from 'ali-react-table';
+import * as antd from 'antd'
 import { connect } from 'umi';
-import { Table, Divider, Tag } from 'antd';
-import styles from "./test.less";
+import { SearchOutlined } from '@ant-design/icons';
+import styles from './ TableList.less';
 
-const { Column, ColumnGroup } = Table;
 const TableList = (props) => {
-  const [tableColumns, setTableColumns] = useState([]);
+  // const [tableColumns, setTableColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [detailShow,setDetailShow]=useState(false)
 
-//date
-useEffect(() => {
-  console.log('props', props)
-  props.dispatch({
-    type: "tableList/getData",
+  //date
+  useEffect(() => {
+    props.dispatch({
+      type: "tableList/getData",
+    })
+  }, [])
+  useEffect(() => {
+    setTableData(props.data)
   })
-}, [])
-useEffect(() => {
-  setTableData(props.data)
-})
 
   //转数组格式
   let arr = [];
-  let arr3 = [];
-  tableData.map(responseDataItem=>{ // 第一层
-    //const len = responseDataItem.timeData.length;
+  let countdata;
+  let expressiondata;
+  let chargeItemsdata;
+  tableData.map(responseDataItem => { // 第一层
     responseDataItem.dispatchInfo.map((infoItem, index) => { //第二层
       infoItem.chargeItems.map((chargeItems, i) => { // 第三层
         let spanex = chargeItems.expression.length;
         let spandd = chargeItems.tt.length;
-        let threespan = 0;
-        if (spanex > spandd) {
-          threespan = spanex;
-        } else {
-          threespan = spandd
-        }
-        console.log('changdu',spandd,spanex,threespan)
-        arr= [
-          ...arr,
-          {
-            sendGroup: responseDataItem.sendGroup,
-            chargeItemNameA:infoItem.chargeItemNameA,
-            chargeItemName: chargeItems.chargeItemName,
-            arrexpression: chargeItems.expression,
-            arrdd: chargeItems.tt,
-            threespan,
+        let threespan = spanex > spandd ? spanex :spandd;
+        let arr2=[];
+        for (var i = 0; i < threespan; i++){
+          if (chargeItems.expression[i] !== undefined && chargeItems.tt[i]!== undefined) {
+            countdata = Object.assign(chargeItems.expression[i], chargeItems.tt[i])
+            arr2 = [...arr2,countdata]
           }
-        ]
+          if (chargeItems.expression[i] !== undefined && chargeItems.tt[i] === undefined) {
+            expressiondata = Object.assign(chargeItems.expression[i])
+            arr2 = [...arr2,expressiondata]
+          }
+          if (chargeItems.expression[i] === undefined && chargeItems.tt[i] !== undefined) {
+            chargeItemsdata = Object.assign(chargeItems.tt[i])
+            arr2 = [ ...arr2,chargeItemsdata]
+          }
+        }
+        arr2 && arr2.map(i => {
+            arr = [
+            ...arr,
+            {
+              sendGroup: responseDataItem.sendGroup,//第一层
+              chargeItemNameA: infoItem.chargeItemNameA,//第二层
+              chargeItemName: chargeItems.chargeItemName,//第三层
+              endWeight: i.endWeight,//第四层
+              color: i.color, //第四层
+              dd: i.dd,//第四层
+              bb: i.bb,//第四层
+              cc: i.cc,//第四层
+              aa:i.aa,//第四层
+              details:infoItem.details,//第二层的详情
+            }
+            ]
+          return arr;
+        })
 
-
-
-        // console.log('chargeItems', chargeItems)
-        // let arr2 = [];
         // chargeItems.expression.map((expression, f) => {
-        //   chargeItems.tt.map((tt, index) => {
-        //     arr= [
-        //       ...arr,
-        //       {
-        //         sendGroup: responseDataItem.sendGroup,
-        //         chargeItemNameA:infoItem.chargeItemNameA,
-        //         chargeItemName: chargeItems.chargeItemName,
-        //         endWeight:expression.endWeight,
-        //         dd:tt.dd,
-        //       }
-        //     ]
-        //     return arr
-        //   })
-        //   return arr
+          // console.log('expression',expression ,f)
+          // arr = [
+          //   ...arr,
+          //   {
+          //     sendGroup: responseDataItem.sendGroup,//第一层
+          //     chargeItemNameA: infoItem.chargeItemNameA,//第二层
+          //     chargeItemName: chargeItems.chargeItemName,//第三层
+          //     endWeight: expression.endWeight,//第四层
+          //     color: expression.color,
+          //     dd: expression.dd,//第四层
+          //     details:infoItem.details,//第二层的详情
+          //   }
+          // ]
+          // return arr
         // })
+
         return arr
       })
       return arr
@@ -75,35 +89,93 @@ useEffect(() => {
     return arr
   })
 
-  console.log('arr', arr)
-
+  // console.log('arr', arr)
   const dataSource = arr.map((item, index) => {
-    console.log('item',item)
     item.key = index;
     return item;
   })
 
+  // 点击事件
+  const handleView = (record) => {
+    console.log('record+++++', record)
+    if (record.details !== undefined) {
+      console.log('details', record.details)
+      if (detailShow === false) {
+        setDetailShow(true)
+      } else {
+        setDetailShow(false)
+      }
+
+    }
+  }
   const columns = [
-    { code: 'sendGroup', name: '省份', width: 150, features: { autoRowSpan: true, sortable: true } },
-    { code: 'chargeItemNameA', name: '城市', width: 150, features: { autoRowSpan: true, sortable: true } },
-    { code: 'chargeItemName', name: '确诊', align: 'right', features: { autoRowSpan: true, sortable: true } },
-    { code: 'endWeight', name: '治愈', align: 'right', features: { autoRowSpan: false, sortable: true } },
-    { code: 'dd', name: '治愈111', align: 'right', features: { autoRowSpan: false, sortable: true } },
+    { code: 'sendGroup',
+     name: '第一层', width: 150, features: { autoRowSpan: true, sortable: true } },
+    {
+      code: 'chargeItemNameA', name: '第二层',
+      features: { autoRowSpan: true, sortable: true },
+      render: (value, record) => {
+        console.log('record',record)
+        return (
+          <div>
+            <span>{value}</span>
+              <SearchOutlined  onClick={()=>handleView(record)}/>
+              {detailShow === true ? (
+                <p>{ record.details!==undefined ? record.details.name+ ';'+record.details.id :null }</p>
+              ) : ''}
+          </div>
+        )
+      }
+    },
+    { code: 'chargeItemName', name: '第三层', align: 'right', features: { autoRowSpan: true, sortable: true } },
+    {
+      code: 'endWeight', name: '第四层1', align: 'right',
+      features: { autoRowSpan: false, sortable: true },
+    },
+    {
+      code: 'dd', name: '第四层2', align: 'center',features: { autoRowSpan: false, sortable: true },
+    },
+    {
+      code: 'aa', name: '第四层3', align: 'center',features: { autoRowSpan: false, sortable: false },
+    },
   ]
 
-  const pipeline = useTablePipeline({ components: fusion })
+  const pipeline = useTablePipeline({ components: antd })
     .input({ dataSource, columns })
     .use(features.sort({ mode: 'single', defaultSorts: [{ code: 'sendGroup', order: 'desc' }] }))
     .use(features.autoRowSpan())
 
-  return <BaseTable defaultColumnWidth={100} isLoading={isLoading} {...pipeline.getProps()} />
+  return (
+    <div className={styles.aneTableBox}>
+      <BaseTable
+        style={{
+          // width: 500,
+          // height:300,
 
+          overflow: 'auto'
+        }}
+        useOuterBorder
+        getRowProps={(record, _) => {
+          return {
+            style:
+              record.color !== undefined
+                ?
+                { color: '#fd8a00' }
+                : {
+                  // 覆盖 website 中自带的 style，实际使用时可以忽略
+                  background: 'transparent',
+                },
+          }
 
+        }}
+        // defaultColumnWidth={100}
+        // isLoading={props.loading}
+        {...pipeline.getProps()} />
+    </div>
 
-
-
-
+  )
 }
-export default connect(({ tableList, loading, demo }) => ({
+export default connect(({ tableList, loading }) => ({
+  loading: loading.models.tableList,
   data: tableList.data,
 }))(TableList);
