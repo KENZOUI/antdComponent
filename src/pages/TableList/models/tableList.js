@@ -3,7 +3,7 @@ export default {
   state: {
     data: [
       {
-        "sendGroup": "上海青浦",
+        "sendGroup": "第一层第一条数据",
         "dispatchInfo": [
           {
             "chargeItemNameA": "二1",
@@ -80,7 +80,7 @@ export default {
         ]
       },
       {
-        "sendGroup": "杭州萧山",
+        "sendGroup": "第一层第二条数",
         "dispatchInfo": [
           {
             "chargeItemNameA": "二1",
