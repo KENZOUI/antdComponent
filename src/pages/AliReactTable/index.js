@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {Table} from 'antd';
 import { BaseTable, useTablePipeline, features } from 'ali-react-table';
-import * as antd from 'antd'
-import { connect } from 'umi';
 import { SearchOutlined } from '@ant-design/icons';
+import { connect } from 'umi';
 import styles from './ TableList.less';
 
 const TableList = (props) => {
+  // console.log('antd',antd)
   // const [tableColumns, setTableColumns] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [detailShow,setDetailShow]=useState(false)
@@ -59,7 +60,8 @@ const TableList = (props) => {
               bb: i.bb,//第四层
               cc: i.cc,//第四层
               aa:i.aa,//第四层
-              details:infoItem.details,//第二层的详情
+              details: infoItem.details,//第二层的详情
+              send:responseDataItem.send
             }
             ]
           return arr;
@@ -140,7 +142,7 @@ const TableList = (props) => {
     },
   ]
 
-  const pipeline = useTablePipeline({ components: antd })
+  const pipeline = useTablePipeline({ components: Table })
     .input({ dataSource, columns })
     .use(features.sort({ mode: 'single', defaultSorts: [{ code: 'sendGroup', order: 'desc' }] }))
     .use(features.autoRowSpan())
@@ -151,7 +153,6 @@ const TableList = (props) => {
         style={{
           // width: 500,
           // height:300,
-
           overflow: 'auto'
         }}
         useOuterBorder
