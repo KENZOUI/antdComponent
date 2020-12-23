@@ -105,7 +105,7 @@ const BasicLayout = (props) => {
   return (
     <ProLayout
       logo={logo}
-      formatMessage={formatMessage}
+      // formatMessage={formatMessage}
       {...props}
       {...settings}
       onCollapse={handleMenuCollapse}
@@ -120,9 +120,10 @@ const BasicLayout = (props) => {
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
-          breadcrumbName: formatMessage({
-            id: 'menu.home',
-          }),
+          breadcrumbName:''
+          // breadcrumbName: formatMessage({
+          //   id: 'menu.home',
+          // }),
         },
         ...routers,
       ]}

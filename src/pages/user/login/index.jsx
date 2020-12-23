@@ -100,10 +100,11 @@ const Login = (props) => {
                 {
                   required: true,
                   message: (
-                    <FormattedMessage
-                      id="pages.login.username.required"
-                      defaultMessage="请输入用户名!"
-                    />
+                    <p>请输入用户名!</p>
+                    // <FormattedMessage
+                    //   id="pages.login.username.required"
+                    //   defaultMessage="请输入用户名!"
+                    // />
                   ),
                 },
               ]}

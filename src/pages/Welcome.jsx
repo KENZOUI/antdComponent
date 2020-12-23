@@ -8,7 +8,13 @@ import QueryBar from '../components/QueryBar';
 const queryBarData = [
   {
     field: 'name',
-    text: '名称',
+    text: '名称名称',
+    type: 'input',
+    required:true,
+  },
+  {
+    field: 'name11',
+    text: '名称11',
     type: 'input',
   },
   {
@@ -21,29 +27,42 @@ const queryBarData = [
     ],
     defaultValue: 1,
   },
-  {
-    field: 'name1',
-    text: '名称',
-    type: 'input',
-  },
-  {
-    field: 'aa',
-    text: '状态',
-    type: 'select',
-    multiple: 'multiple',
-    labelInValue: true,
-    options: [
-      { label: '必填', value: 1 },
-      { label: '不必填', value: 0 },
-    ],
-  },
-  ,
-  {
-    field: 'creatData',
-    text: '创建日期',
-    type: 'DatePicker',
-    // "picker":'week',
-  },
+  // {
+  //   field: 'name1',
+  //   text: '名称',
+  //   type: 'input',
+  // },
+  // {
+  //   field: 'aa',
+  //   text: '状态',
+  //   type: 'select',
+  //   multiple: 'multiple',
+  //   labelInValue: true,
+  //   options: [
+  //     { label: '必填', value: 1 },
+  //     { label: '不必填', value: 0 },
+  //   ],
+  // },
+  // {
+  //   field: 'creatData',
+  //   text: '创建日期',
+  //   type: 'datePicker',
+  //   // "picker":'week',
+  // },
+  // {
+  //   field: 'rangeData',
+  //   text: '日期区间',
+  //   type: 'rangePicker',
+  //   showTime:'showTime'
+  //   // "picker":'week',
+  // },
+  // {
+  //   field: 'rangeData11',
+  //   text: '日期区间',
+  //   type: 'rangePicker',
+  //   // showTime:'showTime'
+  //   // "picker":'year',
+  // },
 
   //可多条数据
 ];
@@ -61,7 +80,13 @@ const Welcome = (props) => {
   return (
     <PageContainer>
       <Card>
-        <QueryBar dataSource={queryBarData} handleSearch={handleSearch} filter={searchParams} />
+        <QueryBar
+        //  defaultFormLayout="vertical"
+        defaultFormLayout='horizontal'
+        dataSource={queryBarData}
+        handleSearch={handleSearch}
+        // defalultSize='large'
+        filter={searchParams} />
       </Card>
     </PageContainer>
   );

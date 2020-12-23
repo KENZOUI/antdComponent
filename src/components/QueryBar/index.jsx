@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Select, Row, Col, DatePicker } from 'antd';
+import { Form, Input, Button, Select, Row, Col, DatePicker,message} from 'antd';
 import styles from './index.less';
 import dayjs from 'dayjs';
 const { Option } = Select;
@@ -7,6 +7,7 @@ const { RangePicker } = DatePicker;
 const QueryBar = (props) => {
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState(props.dataSource);
+  const [formLayout,setFormLayout]= useState(props.defaultFormLayout);
   const [checked, setChecked] = useState(true);
   const { filter } = props;
   console.log('filter', filter);
@@ -42,13 +43,20 @@ const QueryBar = (props) => {
           </Select>
         );
         break;
-      case 'DatePicker':
-        // console.log('${item.field}', `${item.field}`: dayjs(item.defaultValue))
-        const value = item.field;
+      case 'datePicker':
         return (
           <DatePicker
             style={{ width: '100%' }}
-            // picker={item.picker ? item.picker : null}
+            picker={item.picker ? item.picker : null} //
+          />
+        );
+        break;
+        case 'rangePicker':
+        return (
+          <RangePicker
+            style={{ width: '100%' }}
+            picker={item.picker ? item.picker : null}
+            showTime={item.showTime ? item.showTime : null}
           />
         );
         break;
@@ -102,7 +110,7 @@ const QueryBar = (props) => {
               <Form.Item
                 name={item.field}
                 label={item.text}
-                // initialValue={{`${item[item.field]}`:1 } }
+                rules={[{ required: item.required || false,message: `${item.text}必填`}]}
               >
                 {/* <Input /> */}
                 {switchItem(item)}
@@ -111,22 +119,59 @@ const QueryBar = (props) => {
           ))}
         </Row>
         <div style={{ marginBottom: '24px' }}>
-          <Button type="primary" htmlType="submit">
-            查询
-          </Button>
+          <Button type="primary" htmlType="submit">查询 </Button>
           <Button style={{ marginLeft: 8 }}>重置</Button>
         </div>
       </div>
     );
+  }else{
+    Rowcustom =(
+      <div>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          {dataSource.map((item,index) =>
+            <Col md={6} sm={24} key={index}>
+              <Form.Item
+                name={item.field}
+                label={item.text}
+                rules={[{ required: item.required || false,message: `${item.text}必填`}]}
+              >
+                {/* <Input /> */}
+                {switchItem(item)}
+              </Form.Item>
+            </Col>
+          )}
+          <Col md={6} sm={24}>
+            <span className={styles.submitButtons}>
+            <Button type="primary" htmlType="submit">查询 </Button>
+            <Button style={{ marginLeft: 8 }} onClick={handleFormReset} >重置</Button>
+            </span>
+          </Col>
+        </Row>
+      </div>
+    )
   }
   // 查询
   const onFinish = (values) => {
     const { handleSearch } = props;
+    console.log('values',values)
     //传给父组件
     handleSearch(values);
   };
+  // 重置
+  const handleFormReset=()=>{
+
+  }
   return (
-    <Form form={form} name="formName" onFinish={onFinish} initialValues={props.filter}>
+    <Form
+     form={form}
+    //  {...formItemLayout}
+     layout={formLayout}
+     name="formName"
+     onFinish={onFinish}
+     initialValues={props.filter}
+     className={formLayout==='vertical'? 'antdForm' : ( dataSource.length>3 ?'antdFormHor' :null)}
+     size={props.defalultSize} // small | middle | large
+     >
       {Rowcustom}
     </Form>
   );

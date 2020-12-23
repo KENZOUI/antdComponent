@@ -58,8 +58,8 @@ export default [
               {
                 name: 'demoList',
                 icon: 'table',
-                path: '/tableList',
-                component: './TableList',
+                path: '/aliReactTable',
+                component: './AliReactTable',
               },
               {
                 component: './404',
