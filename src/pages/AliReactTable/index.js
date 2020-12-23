@@ -148,7 +148,7 @@ const TableList = (props) => {
     .use(features.autoRowSpan())
 
   return (
-    <div className={styles.aneTableBox}>
+    <div className={styles.anetdTableBox}>
       <BaseTable
         style={{
           // width: 500,
